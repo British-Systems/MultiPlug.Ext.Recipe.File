@@ -26,6 +26,7 @@
                         </div>
                     </div>
                     <p>Last read at: @Model.LastRead</p>
+                    <p>Last write at: @Model.LastWrite</p>
                 </div>
 
                 <div class="row-fluid">
@@ -37,7 +38,7 @@
                         @foreach (var Extension in @Model.ExtensionNames)
                         {
                             <li>
-                                @Extension
+                                <a href="extensions/simple-file-configurator/editor/@Extension">@Extension</a>
                             </li>
                         }
                     </ul>

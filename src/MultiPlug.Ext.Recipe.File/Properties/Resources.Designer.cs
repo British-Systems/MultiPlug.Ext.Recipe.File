@@ -61,6 +61,26 @@ namespace MultiPlug.Ext.Recipe.File.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to @model MultiPlug.Ext.Recipe.File.Models.EditorModel
+        ///
+        ///&lt;form action=&quot;&quot; method=&quot;post&quot; accept-charset=&quot;utf-8&quot; enctype=&quot;application/x-www-form-urlencoded&quot;&gt;
+        ///    &lt;input type=&quot;hidden&quot; name=&quot;Assembly&quot; value=&quot;@Model.Assembly&quot;&gt;
+        ///    &lt;section class=&quot;row-fluid&quot;&gt;
+        ///
+        ///        &lt;div class=&quot;row-fluid&quot;&gt;
+        ///            &lt;div class=&quot;box&quot;&gt;
+        ///                &lt;div class=&quot;span2&quot;&gt;
+        ///                    &lt;a style=&quot;line-height: 52px;&quot; href=&quot;#&quot;&gt;&lt;img alt=&quot;Hermes Logo&quot; src=&quot;xxxx&quot;&gt;&lt;/a&gt;
+        ///                &lt;/div&gt;
+        ///                &lt;div class=&quot;span [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Editor {
+            get {
+                return ResourceManager.GetString("Editor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to @model MultiPlug.Ext.Recipe.File.Models.SettingsModel
         ///
         ///&lt;section class=&quot;row-fluid&quot;&gt;

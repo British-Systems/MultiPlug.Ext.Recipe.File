@@ -31,12 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MultiPlug.Base, Version=1.0.38.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MultiPlug.Base.1.0.38\lib\net472\MultiPlug.Base.dll</HintPath>
+    <Reference Include="MultiPlug.Base, Version=1.0.48.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MultiPlug.Base.1.0.48\lib\net472\MultiPlug.Base.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MultiPlug.Extension.Core, Version=1.0.52.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MultiPlug.Extension.Core.1.0.52\lib\net472\MultiPlug.Extension.Core.dll</HintPath>
+    <Reference Include="MultiPlug.Extension.Core, Version=1.0.58.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MultiPlug.Extension.Core.1.0.58\lib\net472\MultiPlug.Extension.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -52,7 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Views\CSettingsView.cs" />
+    <Compile Include="Controllers\Settings\Editor\EditorController.cs" />
+    <Compile Include="Controllers\Settings\SettingsApp.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="Models\EditorModel.cs" />
     <Compile Include="RecipeFile.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,13 +64,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomeController.cs" />
+    <Compile Include="Controllers\Settings\Home\HomeController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Controllers\Settings\Editor\Editor.cshtml" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\settings.cshtml" />
+    <None Include="Controllers\Settings\Home\settings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -75,6 +79,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

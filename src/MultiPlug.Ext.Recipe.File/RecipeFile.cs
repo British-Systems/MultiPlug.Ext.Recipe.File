@@ -8,27 +8,31 @@ using MultiPlug.Extension.Core;
 using MultiPlug.Ext.Recipe.File.Properties;
 using MultiPlug.Extension.Core.Exchange;
 using MultiPlug.Extension.Core.Http;
+using MultiPlug.Ext.Recipe.File.Controllers.Settings;
 
 namespace MultiPlug.Ext.Recipe.File
 {
     public class RecipeFile : MultiPlugExtension, IRecipe
     {
-        public event EventHandler<Extension.Core.Exchange.Recipe> RecipeUpdate;
-
-        private SettingsModel m_Settings = new SettingsModel { ExtensionNames = new List<string>(), FilePath = "", LastRead = "Never" };
-        readonly HttpEndpoint[] m_Dashboards;
+        readonly HttpEndpoint[] m_Apps;
 
         public RecipeFile()
         {
-            m_Settings.FilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "base.json");
-            m_Dashboards = new HttpEndpoint[] { new CSettingsView(m_Settings) };
+            m_Apps = new HttpEndpoint[] { new SettingsApp() };
+
+            Core.Instance.Loaded += OnRecipeLoaded;
+        }
+
+        private void OnRecipeLoaded(object sender, Extension.Core.Exchange.Recipe e)
+        {
+            MultiPlugSignals.Updates.Recipe(e);
         }
 
         public override HttpEndpoint[] HttpEndpoints
         {
             get
             {
-                return m_Dashboards;
+                return m_Apps;
             }
         }
 
@@ -38,105 +42,76 @@ namespace MultiPlug.Ext.Recipe.File
             {
                 return new RazorTemplate[]
                 {
-                    new RazorTemplate("SimpleFileConfiguratorSettingsView", Resources.settings)
+                    new RazorTemplate("SimpleFileConfiguratorSettingsView", Resources.settings),
+                    new RazorTemplate("RecipeFileEditor", Resources.Editor)
                 };
             }
         }
 
-        private Extension.Core.Exchange.Recipe LoadFile()
+        public override void RecipeLoad()
         {
-            Extension.Core.Exchange.Recipe Result;
-
-            var json = System.IO.File.ReadAllText(m_Settings.FilePath);
-
-            Result = new Extension.Core.Exchange.Recipe { Extensions = KeyValuesJson.Parse(json) };
-
-            return Result;
+            Core.Instance.Load();
         }
 
-        public void RecipeLoad()
+        public override void RecipeSave(Extension.Core.Exchange.Recipe theRecipe)
         {
-            Extension.Core.Exchange.Recipe config = null;
-            var nownow = DateTime.Now;
+            //Extension.Core.Exchange.Recipe LoadedFromFile = null;
 
-            try
-            {
-                config = LoadFile();
-            }
-            catch
-            {
-                config = new Extension.Core.Exchange.Recipe();
-                config.Extensions = new KeyValuesJson[0];
+            //try
+            //{
+            //    LoadedFromFile = LoadFile();
+            //}
+            //catch
+            //{
+            //    // File not found ?
+            //}
 
-                m_Settings.LastRead = "Read Error! at " + nownow.ToString("d/M/yyyy") + " at " + nownow.ToString("h:mm:ss");
-                RecipeUpdate?.Invoke(this, config);
-                return;
-            }
+            //var configList = theRecipe.Extensions.ToList();
 
-            m_Settings.ExtensionNames = (config != null) ? config.Extensions.Select(e => e.Key).ToList() : new List<string>();         
-            m_Settings.LastRead = nownow.ToString("d/M/yyyy") + " at " + nownow.ToString("h:mm:ss");
+            //if (LoadedFromFile != null)
+            //{
+            //    LoadedFromFile.Extensions.ToList().ForEach(e =>
+            //    {
+            //        if (configList.Find(ce => ce.Key == e.Key) == null)
+            //        {
+            //            configList.Add(e);
+            //        }
+            //    });
+            //}
 
-            RecipeUpdate?.Invoke(this, config);
-        }
+            //var json = KeyValuesJson.Stringify( configList.ToArray() );
 
-        private void SendConfiguration()
-        {
-            // Unused?
-        }
+            //var json = theRecipe.Json;
 
-        public void RecipeSave(Extension.Core.Exchange.Recipe theRecipe)
-        {
-            Extension.Core.Exchange.Recipe LoadedFromFile = null;
+            //using (Stream stream = new FileStream(m_Settings.FilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            //{
+            //    using (StreamWriter writer = new StreamWriter(stream))
+            //    {
+            //        writer.Write(json);
+            //    }
+            //}
 
-            try
-            {
-                LoadedFromFile = LoadFile();
-            }
-            catch
-            {
-                // File not found ?
-            }
-
-            var configList = theRecipe.Extensions.ToList();
-
-            if (LoadedFromFile != null)
-            {
-                LoadedFromFile.Extensions.ToList().ForEach(e =>
-                {
-                    if (configList.Find(ce => ce.Key == e.Key) == null)
-                    {
-                        configList.Add(e);
-                    }
-                });
-            }
-
-            var json = KeyValuesJson.Stringify( configList.ToArray() );
-
-            using (Stream stream = new FileStream(m_Settings.FilePath, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                using (StreamWriter writer = new StreamWriter(stream))
-                {
-                    writer.Write(json);
-                }
-            }
+            Core.Instance.Save(theRecipe);
         }
 
         public override object Save()
         {
-            var result = new List<Payload>(); 
+            //var result = new List<Payload>(); 
 
-            Type type = m_Settings.GetType();
+            //Type type = m_Settings.GetType();
 
-            List<Pair> Pairs = new List<Pair>();
+            //List<Pair> Pairs = new List<Pair>();
 
-            foreach (var Prop in type.GetProperties())
-            {
-                Pairs.Add(new Pair( Prop.Name, Prop.GetValue(m_Settings, null).ToString() ) );
-            }
+            //foreach (var Prop in type.GetProperties())
+            //{
+            //    Pairs.Add(new Pair( Prop.Name, Prop.GetValue(m_Settings, null).ToString() ) );
+            //}
 
-            result.Add(new Payload( string.Empty, Pairs.ToArray() ));
-            
-            return result;
+            //result.Add(new Payload( string.Empty, Pairs.ToArray() ));
+
+            //return result;
+
+            return Core.Instance;
         }
 
     }

@@ -8,5 +8,6 @@ namespace MultiPlug.Ext.Recipe.File.Models
         public List<string> ExtensionNames { get; internal set; }
         public string FilePath { get; set; }
         public string LastRead { get; internal set; }
+        public string LastWrite { get; internal set; }
     }
 }
