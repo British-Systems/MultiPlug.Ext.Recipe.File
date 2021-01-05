@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Simple File Configurator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("File based recipe injector for MultiPlug")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("British Systems")]
 [assembly: AssemblyProduct("Simple File Configurator")]
-[assembly: AssemblyCopyright("Great British Systems Ltd 2019")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Great British Systems Ltd 2021")]
+[assembly: AssemblyTrademark("MultiPlug")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.10.0")]
-[assembly: AssemblyFileVersion("1.0.10.0")]
+[assembly: AssemblyVersion("1.0.11.0")]
+[assembly: AssemblyFileVersion("1.0.11.0")]

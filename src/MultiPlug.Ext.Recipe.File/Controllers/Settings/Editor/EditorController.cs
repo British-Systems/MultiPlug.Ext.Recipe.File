@@ -1,12 +1,11 @@
 ﻿using MultiPlug.Base.Attribute;
 using MultiPlug.Base.Http;
 using MultiPlug.Ext.Recipe.File.Models;
-using System;
 
 namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
 {
     [Route("editor/*")]
-    class EditorController : Controller
+    public class EditorController : SettingsApp
     {
         public EditorController()
         {

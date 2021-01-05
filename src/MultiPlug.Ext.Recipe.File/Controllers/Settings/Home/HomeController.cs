@@ -5,7 +5,7 @@ using MultiPlug.Ext.Recipe.File.Models;
 namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Home
 {
     [Route("")]
-    class HomeController : Controller
+    public class HomeController : SettingsApp
     {
         public HomeController()
         {
