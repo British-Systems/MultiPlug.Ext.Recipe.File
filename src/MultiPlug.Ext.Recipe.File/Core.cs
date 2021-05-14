@@ -69,7 +69,7 @@ namespace MultiPlug.Ext.Recipe.File
 
             var Search = Object.Extensions.FirstOrDefault(e => e.Assembly.Equals(theAssembly, StringComparison.OrdinalIgnoreCase));
 
-            return (Search != null) ? Search.Properties.ToString() : string.Empty;
+            return (Search != null) ? Search.Properties.ToString().Trim() : string.Empty;
         }
 
         internal void Load()

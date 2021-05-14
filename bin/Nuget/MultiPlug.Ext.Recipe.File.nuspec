@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MultiPlug.Ext.Recipe.File</id>
-    <version>1.0.11</version>
+    <version>1.0.12</version>
     <title>File Based Recipe Injector</title>
     <authors>British Systems</authors>
     <owners>British Systems</owners>
@@ -14,6 +14,7 @@
 * Allows MultiPlug configurations to be saved and loaded from a file.
 
 Change Log:
+1.0.12 Enhancement: Download Json for each Extension
 1.0.11 Compatible with MultiPlug.Core 2.2.68
 1.0.10 Enhancement: Applied latest base classes
 1.0.8 No change
@@ -25,9 +26,9 @@ Change Log:
     <tags>MultiPlug IOT Fog_Computing Edge_Computing IIOT</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.7.2">
-        <dependency id="MultiPlug.Base" version="1.0.49" />
+        <dependency id="MultiPlug.Base" version="1.0.53" />
         <dependency id="MultiPlug.Extension.Core" version="1.0.59" />
-        <dependency id="MultiPlug.Core" version="2.2.68" />
+        <dependency id="MultiPlug.Core" version="2.2.74" />
       </group>
     </dependencies>
   </metadata>

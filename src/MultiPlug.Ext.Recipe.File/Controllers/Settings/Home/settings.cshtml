@@ -38,7 +38,8 @@
                         @foreach (var Extension in @Model.Extension.Model.ExtensionNames)
                         {
                             <li>
-                                <a href="extensions/simple-file-configurator/editor/@Extension">@Extension</a>
+                                <a href="@Raw(Model.Context.Paths.Home)editor/@Extension" >@Extension</a>
+                                <a href="@Raw(Model.Context.Paths.APIs)download/@(Extension).json" download>Download</a>
                             </li>
                         }
                     </ul>

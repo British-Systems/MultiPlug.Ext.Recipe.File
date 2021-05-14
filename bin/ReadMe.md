@@ -3,5 +3,5 @@
 * Update AssemblyInfo.cs with new version numbers
 * Build Release in Visual Studio
 * Update MultiPlug.Ext.Recipe.File.nuspec with new version numbers
-* Run nuget pack Nuget/MultiPlug.Ext.Recipe.File.nuspec
+* Run pack.bat
 * Upload it to https://www.nuget.org/ manually
