@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MultiPlug.Ext.Recipe.File</id>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
     <title>File Based Recipe Injector</title>
     <authors>British Systems</authors>
     <owners>British Systems</owners>
@@ -14,6 +14,7 @@
 * Allows MultiPlug configurations to be saved and loaded from a file.
 
 Change Log:
+1.0.13 Enhancement: Merges Extension Recipes on Save.
 1.0.12 Enhancement: Download Json for each Extension
 1.0.11 Compatible with MultiPlug.Core 2.2.68
 1.0.10 Enhancement: Applied latest base classes

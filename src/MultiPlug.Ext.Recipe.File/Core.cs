@@ -99,15 +99,59 @@ namespace MultiPlug.Ext.Recipe.File
             Loaded?.Invoke(this, config);
         }
 
+        private RecipeCollection Merge(RecipeCollection theExisting, RecipeCollection theNew )
+        {
+            if (theNew.Extensions.Any())
+            {
+                List<RecipeItem> New = new List<RecipeItem>(theNew.Extensions);
+
+                foreach (RecipeItem Item in theExisting.Extensions)
+                {
+                    RecipeItem Search = New.FirstOrDefault(i => i.Assembly == Item.Assembly);
+
+                    if (Search == null)
+                    {
+                        New.Add(Item);
+                    }
+                }
+
+                theExisting.Extensions = New.ToArray();
+            }
+
+            return theExisting;
+        }
+
+
         internal void Save(Extension.Core.Exchange.Recipe theRecipe)
         {
-            var json = theRecipe.Json;
+            RecipeCollection ExistingRecipeCollection = null;
+
+            try
+            {
+                Extension.Core.Exchange.Recipe ConfigFile = LoadFile();
+                ExistingRecipeCollection = Extension.Core.Exchange.Recipe.ToObject(ConfigFile.Json);
+            }
+            catch
+            {
+            }
+
+
+            RecipeCollection NewRecipeCollection = Extension.Core.Exchange.Recipe.ToObject(theRecipe.Json);
+
+            if(ExistingRecipeCollection != null)
+            {
+                NewRecipeCollection = Merge(ExistingRecipeCollection, NewRecipeCollection);
+            }
+
+            var Recipe = new Extension.Core.Exchange.Recipe();
+
+            Recipe.ToJson(NewRecipeCollection);
 
             using (Stream stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 using (StreamWriter writer = new StreamWriter(stream))
                 {
-                    writer.Write(json);
+                    writer.Write(Recipe.Json);
                 }
             }
 
