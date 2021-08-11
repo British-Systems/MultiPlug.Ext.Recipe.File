@@ -3,7 +3,7 @@ using MultiPlug.Extension.Core.Attribute;
 
 namespace MultiPlug.Ext.Recipe.File.Controllers.Settings
 {
-    [Name("Simple File Configurator")]
+    [Name("Recipe via File")]
     [HttpEndpointType(HttpEndpointType.Settings)]
     [ViewAs(ViewAs.Partial)]
     public class SettingsApp : Controller

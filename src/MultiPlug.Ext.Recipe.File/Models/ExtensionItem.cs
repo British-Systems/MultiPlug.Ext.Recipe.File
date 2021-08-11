@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace MultiPlug.Ext.Recipe.File.Models
 {
-    public class EditorModel
+    public class ExtensionItem
     {
-        public string Json { get; set; }
-
-        public ExtensionItem[] Extensions { get; set; }
-
-        public string Selected { get; set; }
+        public string Name { get; set; }
+        public bool Save { get; set; }
     }
 }

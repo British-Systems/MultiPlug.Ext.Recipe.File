@@ -1,0 +1,41 @@
+﻿@model MultiPlug.Base.Http.EdgeApp
+
+<section class="row-fluid">
+
+    <div class="row-fluid">
+        <div class="box">
+
+            <div class="span12">
+                <p style="font-size:22.75px; padding-top:10px; text-align: center;">Simple File Configurator</p>
+            </div>
+
+        </div>
+    </div>
+
+    @Include("MultiPlug.Ext.Recipe.File.RecipeFile_Navigation")
+
+    <div class="row-fluid">
+        <div class="box">
+            <h4>Sideload</h4>
+            <div class="row-fluid well">
+                <p>You can sideload a recipe file here.</p>
+
+                <form class="form-horizontal" method="post" action="" accept-charset="utf-8" enctype="multipart/form-data">
+                    <div class="control-group">
+                        <label class="control-label" for="sideloadFile">File</label>
+                        <div class="controls">
+                            <input type="file" id="sideloadFile" class="form-control" name="file" accept=".json">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-green">Sideload</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</section>
+

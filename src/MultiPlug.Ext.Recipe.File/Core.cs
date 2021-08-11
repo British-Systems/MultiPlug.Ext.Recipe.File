@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MultiPlug.Extension.Core.Exchange;
-using Newtonsoft.Json.Linq;
+using MultiPlug.Ext.Recipe.File.Models;
 
 namespace MultiPlug.Ext.Recipe.File
 {
@@ -11,12 +11,21 @@ namespace MultiPlug.Ext.Recipe.File
     {
         private static Core m_Instance = null;
 
+        internal void SetSave(string theExtension, bool shouldSave)
+        {
+            ExtensionItem Search = ExtensionItems.FirstOrDefault(Extension => Extension.Name == theExtension);
+            if(Search != null)
+            {
+                Search.Save = shouldSave;
+            }
+        }
+
         public event EventHandler<Extension.Core.Exchange.Recipe> Loaded;
 
-        public List<string> ExtensionNames { get; internal set; } = new List<string>();
-        public string FilePath { get; set; }
-        public string LastRead { get; internal set; }
-        public string LastWrite{ get; internal set; }
+        internal ExtensionItem[] ExtensionItems { get; private set; } = new ExtensionItem[0];
+        internal string FilePath { get; private set; }
+        internal string LastRead { get; private set; }
+        internal string LastWrite{ get; private set; }
 
         public static Core Instance
         {
@@ -30,32 +39,47 @@ namespace MultiPlug.Ext.Recipe.File
             }
         }
 
+
+
         private Core()
         {
             FilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "base.json");
             LastRead = "Never";
         }
 
+        internal string ReadFile()
+        {
+            return System.IO.File.ReadAllText(FilePath);
+        }
+
+
         private Extension.Core.Exchange.Recipe LoadFile()
         {
-            Extension.Core.Exchange.Recipe Result;
-
-            var json = System.IO.File.ReadAllText(FilePath);
-
-            Result = new Extension.Core.Exchange.Recipe { Json = json };
-
+            Extension.Core.Exchange.Recipe Result = new Extension.Core.Exchange.Recipe { Json = ReadFile() };
             return Result;
         }
 
-        internal void Push(string theAssembly, string theJson)
+        internal void Replace(string theJson)
         {
             try
             {
-                RecipeItem item = new RecipeItem { Assembly = theAssembly, Properties = JObject.Parse(theJson) };
-                RecipeCollection Collection = new RecipeCollection { Extensions = new RecipeItem[] { item }};
-                var Recipe = new Extension.Core.Exchange.Recipe();
-                Recipe.ToJson(Collection);
-                Loaded?.Invoke(this, Recipe);
+                RecipeItem item = new RecipeItem(theJson);
+
+                RecipeCollection Collection;
+
+                if( item.Assembly == null)
+                {
+                    Collection = Extension.Core.Exchange.Recipe.ToObject(theJson);
+                }
+                else
+                {
+                    Collection = new RecipeCollection { Extensions = new RecipeItem[] { item }};
+                }
+                        
+                var Recipe = new Extension.Core.Exchange.Recipe(Collection);
+                Save(Recipe);
+
+                ExtensionItems = Merge(ExtensionItems, Collection.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true }).ToArray());
             }
             catch(Newtonsoft.Json.JsonReaderException)
             {
@@ -69,37 +93,75 @@ namespace MultiPlug.Ext.Recipe.File
 
             var Search = Object.Extensions.FirstOrDefault(e => e.Assembly.Equals(theAssembly, StringComparison.OrdinalIgnoreCase));
 
-            return (Search != null) ? Search.Properties.ToString().Trim() : string.Empty;
+            string Result = string.Empty;
+
+            if(Search != null)
+            {
+                Result = Search.ToJson(true);
+            }
+
+            return Result;
+        }
+
+        internal void LoadSingle(string theAssembly)
+        {
+            Extension.Core.Exchange.Recipe config = LoadFile();
+            RecipeCollection Object = Extension.Core.Exchange.Recipe.ToObject(config.Json);
+
+            var Search = Object.Extensions.FirstOrDefault(e => e.Assembly.Equals(theAssembly, StringComparison.OrdinalIgnoreCase));
+
+            if( Search != null)
+            {
+                Loaded?.Invoke(this, new Extension.Core.Exchange.Recipe(new RecipeCollection(new[] { Search })));             
+            }
         }
 
         internal void Load()
         {
-            Extension.Core.Exchange.Recipe config = null;
-            var nownow = DateTime.Now;
+            Extension.Core.Exchange.Recipe Recipe = null;
+            DateTime DateTimeNow = DateTime.Now;
 
             RecipeCollection Object = null;
 
             try
             {
-                config = LoadFile();
-                Object = Extension.Core.Exchange.Recipe.ToObject(config.Json);
+                Recipe = LoadFile();
+                Object = Extension.Core.Exchange.Recipe.ToObject(Recipe.Json);
+                LastRead = DateTimeNow.ToString("d/M/yyyy") + " at " + DateTimeNow.ToString("h:mm:ss");
             }
             catch
             {
-                config = new Extension.Core.Exchange.Recipe { Json = string.Empty };
-                // config.Extensions = new KeyValuesJson[0];
-
-                LastRead = "Read Error! at " + nownow.ToString("d/M/yyyy") + " at " + nownow.ToString("h:mm:ss");
-                Loaded?.Invoke(this, config);
+                Recipe = new Extension.Core.Exchange.Recipe { Json = string.Empty };
+                LastRead = "Read Error! at " + DateTimeNow.ToString("d/M/yyyy") + " at " + DateTimeNow.ToString("h:mm:ss");
             }
 
-            ExtensionNames = (Object != null) ? Object.Extensions.Select(e => e.Assembly).ToList() : new List<string>();
-            LastRead = nownow.ToString("d/M/yyyy") + " at " + nownow.ToString("h:mm:ss");
 
-            Loaded?.Invoke(this, config);
+            if( Object != null)
+            {
+                ExtensionItems = Merge(ExtensionItems, Object.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true }).ToArray());
+            }
+
+            Loaded?.Invoke(this, Recipe);
         }
 
-        private RecipeCollection Merge(RecipeCollection theExisting, RecipeCollection theNew )
+        private ExtensionItem[] Merge(ExtensionItem[] theExisting, ExtensionItem[] theNew)
+        {
+            List<ExtensionItem> New = new List<ExtensionItem>(theNew);
+
+            foreach (ExtensionItem Item in theExisting)
+            {
+                ExtensionItem Search = New.FirstOrDefault(i => i.Name == Item.Name);
+
+                if (Search == null)
+                {
+                    New.Add(Item);
+                }
+            }
+
+            return New.ToArray();
+        }
+
+        private RecipeCollection Merge(RecipeCollection theExisting, RecipeCollection theNew)
         {
             if (theNew.Extensions.Any())
             {
@@ -143,21 +205,29 @@ namespace MultiPlug.Ext.Recipe.File
                 NewRecipeCollection = Merge(ExistingRecipeCollection, NewRecipeCollection);
             }
 
+
+            NewRecipeCollection = RemoveNotToBeSaved(NewRecipeCollection, ExtensionItems);
+
             var Recipe = new Extension.Core.Exchange.Recipe();
 
             Recipe.ToJson(NewRecipeCollection);
 
-            using (Stream stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (Stream FileStream = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                using (StreamWriter writer = new StreamWriter(stream))
+                using (StreamWriter StreamWriter = new StreamWriter(FileStream))
                 {
-                    writer.Write(Recipe.Json);
+                    StreamWriter.Write(Recipe.Json);
                 }
             }
 
-            var nownow = DateTime.Now;
-            LastWrite
-                 = nownow.ToString("d/M/yyyy") + " at " + nownow.ToString("h:mm:ss");
+            DateTime DateTimeNow = DateTime.Now;
+            LastWrite = DateTimeNow.ToString("d/M/yyyy") + " at " + DateTimeNow.ToString("h:mm:ss");
+        }
+
+        private RecipeCollection RemoveNotToBeSaved(RecipeCollection newRecipeCollection, ExtensionItem[] extensionItems)
+        {
+            var UnsaveExtensions = extensionItems.Where(item => item.Save == false);
+            return new RecipeCollection( newRecipeCollection.Extensions.Where(item => UnsaveExtensions.FirstOrDefault( Extension => Extension.Name == item.Assembly) == null ).ToArray());
         }
     }
 }

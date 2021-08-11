@@ -1,0 +1,31 @@
+﻿@model MultiPlug.Base.Http.EdgeApp
+@functions {
+    public string NavLocationIsHome()
+    {
+        return Model.Context.Paths.Current == Model.Context.Paths.Home ? "active" : string.Empty;
+    }
+
+    public string NavLocationIsEditor()
+    {
+        return Model.Context.Paths.Current.StartsWith( Model.Context.Paths.Home + "editor/") ? "active" : string.Empty;
+    }
+
+    public string NavLocationIsSideload()
+    {
+        return Model.Context.Paths.Current == Model.Context.Paths.Home + "sideload/" ? "active" : string.Empty;
+    }
+
+    public string NavLocationIsAbout()
+    {
+        return Model.Context.Paths.Current == Model.Context.Paths.Home + "about/" ? "active" : string.Empty;
+    }
+}
+
+<div class="row-fluid">
+    <ul class="nav nav-tabs">
+        <li class="@NavLocationIsHome()"><a href="@Raw(Model.Context.Paths.Home)">Home</a></li>
+        <li class="@NavLocationIsEditor()"><a href="@Raw(Model.Context.Paths.Home)editor/">Editor</a></li>
+        <li class="@NavLocationIsSideload()"><a href="@Raw(Model.Context.Paths.Home)sideload/">Sideload</a></li>
+        <li class="@NavLocationIsAbout()"><a href="@Raw(Model.Context.Paths.Home)about/">About</a></li>
+    </ul>
+</div>

@@ -1,7 +1,8 @@
 ﻿using MultiPlug.Extension.Core;
-using MultiPlug.Ext.Recipe.File.Properties;
 using MultiPlug.Extension.Core.Exchange;
 using MultiPlug.Extension.Core.Http;
+using MultiPlug.Ext.Recipe.File.Properties;
+using MultiPlug.Ext.Recipe.File.Controllers.Settings.SharedRazor;
 
 namespace MultiPlug.Ext.Recipe.File
 {
@@ -25,8 +26,11 @@ namespace MultiPlug.Ext.Recipe.File
             {
                 return new RazorTemplate[]
                 {
-                    new RazorTemplate("SimpleFileConfiguratorSettingsView", Resources.settings),
-                    new RazorTemplate("RecipeFileEditor", Resources.Editor)
+                    new RazorTemplate(Templates.Navigation, Resources.Navigation),
+                    new RazorTemplate(Templates.Home, Resources.Home),
+                    new RazorTemplate(Templates.Editor, Resources.Editor),
+                    new RazorTemplate(Templates.Sideload, Resources.Sideload),
+                    new RazorTemplate(Templates.About, Resources.About),
                 };
             }
         }

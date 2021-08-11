@@ -1,6 +1,8 @@
 ﻿using MultiPlug.Base.Attribute;
 using MultiPlug.Base.Http;
 using MultiPlug.Ext.Recipe.File.Models;
+using MultiPlug.Ext.Recipe.File.Controllers.Settings.SharedRazor;
+using MultiPlug.Extension.Core.Exchange;
 
 namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
 {
@@ -13,16 +15,42 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
 
         public Response Get( string theAssembly )
         {
-            return new Response
+            if( string.IsNullOrEmpty(theAssembly) )
             {
-                Model = new EditorModel { Assembly = theAssembly, Json = Core.Instance.Load(theAssembly) },
-                Template = "RecipeFileEditor"
-            };
+                RecipeItem Item = new RecipeItem();
+                Item.Assembly = string.Empty;
+                Item.Properties = new Newtonsoft.Json.Linq.JObject();
+
+                return new Response
+                {
+                    Model = new EditorModel
+                    {
+                        Selected = string.Empty,
+                        Json = Item.ToJson(),
+                        Extensions = Core.Instance.ExtensionItems
+                    },
+                    Template = Templates.Editor
+                };
+
+            }
+            else
+            {
+                return new Response
+                {
+                    Model = new EditorModel
+                    {
+                        Selected = theAssembly,
+                        Json = Core.Instance.Load(theAssembly),
+                        Extensions = Core.Instance.ExtensionItems
+                    },
+                    Template = Templates.Editor
+                };
+            }
         }
 
         public Response Post(EditorModel theModel)
         {
-            Core.Instance.Push(theModel.Assembly, theModel.Json);
+            Core.Instance.Replace(theModel.Json);
 
             return new Response
             {

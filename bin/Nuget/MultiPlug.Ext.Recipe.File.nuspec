@@ -2,18 +2,20 @@
 <package >
   <metadata>
     <id>MultiPlug.Ext.Recipe.File</id>
-    <version>1.0.13</version>
-    <title>File Based Recipe Injector</title>
+    <version>1.0.14</version>
+    <title>Multiplug Local File Recipe Manager</title>
     <authors>British Systems</authors>
     <owners>British Systems</owners>
     <projectUrl>https://github.com/british-systems/MultiPlug.Ext.Recipe.File</projectUrl>
     <icon>images\multiplugico.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>File based recipe injector for MultiPlug</description>
+    <description>Multiplug Local File Recipe Manager</description>
+	<license type="expression">MIT</license>
     <releaseNotes>Application Use:
-* Allows MultiPlug configurations to be saved and loaded from a file.
+* Allows MultiPlug configurations (recipes) to be saved and loaded from a file.
 
 Change Log:
+1.0.14 Enhancement: Download and Sideload Individual recipe items by either a file or via a text editor, or a complete recipe. 
 1.0.13 Enhancement: Merges Extension Recipes on Save.
 1.0.12 Enhancement: Download Json for each Extension
 1.0.11 Compatible with MultiPlug.Core 2.2.68
@@ -24,12 +26,12 @@ Change Log:
 1.0.5 Enhancement: Applied latest base classes
 </releaseNotes>
     <copyright>Great British Systems Ltd 2021</copyright>
-    <tags>MultiPlug IOT Fog_Computing Edge_Computing IIOT</tags>
+    <tags>MultiPlug IOT Edge Edge_Computing IIOT</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.7.2">
-        <dependency id="MultiPlug.Base" version="1.0.53" />
-        <dependency id="MultiPlug.Extension.Core" version="1.0.59" />
-        <dependency id="MultiPlug.Core" version="2.2.74" />
+        <dependency id="MultiPlug.Base" version="1.0.62" />
+        <dependency id="MultiPlug.Extension.Core" version="1.0.62" />
+        <dependency id="MultiPlug.Core" version="2.2.75" />
       </group>
     </dependencies>
   </metadata>

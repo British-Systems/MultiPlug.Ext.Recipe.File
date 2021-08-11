@@ -1,5 +1,6 @@
 ﻿using MultiPlug.Base.Attribute;
 using MultiPlug.Base.Http;
+using MultiPlug.Ext.Recipe.File.Controllers.Settings.SharedRazor;
 using MultiPlug.Ext.Recipe.File.Models;
 
 namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Home
@@ -17,12 +18,12 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Home
             {
                 Model = new SettingsModel
                 {
-                    ExtensionNames = Core.Instance.ExtensionNames,
+                    Extensions = Core.Instance.ExtensionItems,
                     FilePath = Core.Instance.FilePath,
                     LastRead = Core.Instance.LastRead,
                     LastWrite = Core.Instance.LastWrite
                 },
-                Template = "SimpleFileConfiguratorSettingsView"
+                Template = Templates.Home
             };
         }
     }

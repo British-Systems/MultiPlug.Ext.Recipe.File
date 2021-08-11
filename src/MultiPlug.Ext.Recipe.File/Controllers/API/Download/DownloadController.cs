@@ -9,21 +9,32 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.API.Download
     {
         public Response Get(string id)
         {
-  
-            int LastIndexOfDot = id.LastIndexOf('.');
-            string lhs = LastIndexOfDot < 0 ? id : id.Substring(0, LastIndexOfDot), rhs = LastIndexOfDot < 0 ? "" : id.Substring(LastIndexOfDot + 1);
-
-
-
-            string Json = Core.Instance.Load(lhs);
-
-            return new Response
+            if( string.IsNullOrEmpty(id) )
             {
-                MediaType = "text/plain",
-                RawBytes = Encoding.ASCII.GetBytes(Json)
-            };
+                return new Response
+                {
+                    StatusCode = System.Net.HttpStatusCode.NotFound
+                };
+            }
+
+            if( id.Equals("recipe.json", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return new Response
+                {
+                    MediaType = "text/plain",
+                    RawBytes = Encoding.ASCII.GetBytes(Core.Instance.ReadFile())
+                };
+            }
+            else
+            {
+                int LastIndexOfDot = id.LastIndexOf('.');
+                string lhs = LastIndexOfDot < 0 ? id : id.Substring(0, LastIndexOfDot), rhs = LastIndexOfDot < 0 ? "" : id.Substring(LastIndexOfDot + 1);
+                return new Response
+                {
+                    MediaType = "text/plain",
+                    RawBytes = Encoding.ASCII.GetBytes(Core.Instance.Load(lhs))
+                };
+            }
         }
-
-
     }
 }
