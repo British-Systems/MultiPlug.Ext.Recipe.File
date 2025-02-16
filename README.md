@@ -1,6 +1,10 @@
 # MultiPlug.Ext.Recipe.File
 An recipe configurator based on a local file
 
+## Wiki
+
+[https://github.com/British-Systems/MultiPlug.Ext.Recipe.File/wiki](Read the Wiki here)
+
 ## Getting Started
 
 These instructions will guide you the installation of the Extension on an instance of the MultiPlug .Net Edge Computing Platform.
