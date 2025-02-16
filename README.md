@@ -3,7 +3,7 @@ An recipe configurator based on a local file
 
 ## Wiki
 
-[https://github.com/British-Systems/MultiPlug.Ext.Recipe.File/wiki](Read the Wiki here)
+[Read the Wiki Here](https://github.com/British-Systems/MultiPlug.Ext.Recipe.File/wiki)
 
 ## Getting Started
 
