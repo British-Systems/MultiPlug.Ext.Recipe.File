@@ -18,6 +18,7 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Home
             {
                 Model = new SettingsModel
                 {
+                    RebootUserPrompt = Core.Instance.RebootUserPrompt,
                     Extensions = Core.Instance.ExtensionItems,
                     FilePath = Core.Instance.FilePath,
                     LastRead = Core.Instance.LastRead,

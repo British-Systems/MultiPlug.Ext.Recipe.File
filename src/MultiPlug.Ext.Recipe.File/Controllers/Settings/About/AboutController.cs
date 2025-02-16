@@ -22,6 +22,7 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.About
                 Template = Templates.About,
                 Model = new Models.AboutModel
                 {
+                    RebootUserPrompt = Core.Instance.RebootUserPrompt,
                     Title = ExecutingAssembly.GetCustomAttribute<AssemblyTitleAttribute>().Title,
                     Description = ExecutingAssembly.GetCustomAttribute<AssemblyDescriptionAttribute>().Description,
                     Company = ExecutingAssembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company,

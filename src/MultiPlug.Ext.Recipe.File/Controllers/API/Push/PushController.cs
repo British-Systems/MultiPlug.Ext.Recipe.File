@@ -29,7 +29,9 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.API.Push
 
             if (id.Equals("recipe", System.StringComparison.OrdinalIgnoreCase))
             {
-                Core.Instance.Load();
+                Core.Instance.SetOverwriteAll(true);
+                Core.Instance.RebootUserPrompt = false;
+                Core.Instance.PushRecipe();
 
                 return new Response
                 {

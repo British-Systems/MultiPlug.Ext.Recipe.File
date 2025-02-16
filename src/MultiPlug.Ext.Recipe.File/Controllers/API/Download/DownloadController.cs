@@ -22,7 +22,7 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.API.Download
                 return new Response
                 {
                     MediaType = "text/plain",
-                    RawBytes = Encoding.ASCII.GetBytes(Core.Instance.ReadFile())
+                    RawBytes = Encoding.ASCII.GetBytes(Core.Instance.ReadFile(Core.c_MainFile))
                 };
             }
             else
@@ -32,7 +32,7 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.API.Download
                 return new Response
                 {
                     MediaType = "text/plain",
-                    RawBytes = Encoding.ASCII.GetBytes(Core.Instance.Load(lhs))
+                    RawBytes = Encoding.ASCII.GetBytes(Core.Instance.Load(Core.c_MainFile, lhs))
                 };
             }
         }

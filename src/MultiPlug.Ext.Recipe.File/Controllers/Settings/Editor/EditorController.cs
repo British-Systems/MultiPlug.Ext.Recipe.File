@@ -3,19 +3,32 @@ using MultiPlug.Base.Http;
 using MultiPlug.Ext.Recipe.File.Models;
 using MultiPlug.Ext.Recipe.File.Controllers.Settings.SharedRazor;
 using MultiPlug.Extension.Core.Exchange;
+using System.Linq;
 
 namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
 {
-    [Route("editor/*")]
+    [Route("editor/")]
     public class EditorController : SettingsApp
     {
         public EditorController()
         {
         }
 
-        public Response Get( string theAssembly )
+        public Response Get( string file, string extension )
         {
-            if( string.IsNullOrEmpty(theAssembly) )
+            var Json = Core.Instance.ReadFile(string.IsNullOrEmpty(file) ? Core.c_MainFile : file);
+
+            RecipeCollection RecipeCollection = Extension.Core.Exchange.Recipe.ToObject(Json);
+
+            string[] Extensions = new string[0];
+
+            if(RecipeCollection.Extensions != null)
+            {
+                Extensions = RecipeCollection.Extensions.Select(e => e.Assembly).ToArray();
+            }
+
+
+            if ( string.IsNullOrEmpty(extension) )
             {
                 RecipeItem Item = new RecipeItem();
                 Item.Assembly = string.Empty;
@@ -25,9 +38,12 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
                 {
                     Model = new EditorModel
                     {
-                        Selected = string.Empty,
+                        RebootUserPrompt = Core.Instance.RebootUserPrompt,
+                        SelectedExtension = string.Empty,
                         Json = Item.ToJson(),
-                        Extensions = Core.Instance.ExtensionItems
+                        Extensions = Extensions,
+                        SnapShots = Core.Instance.GetSnapShots(),
+                        SelectedFile = string.IsNullOrEmpty(file) ? Core.c_MainFile : file
                     },
                     Template = Templates.Editor
                 };
@@ -39,9 +55,12 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
                 {
                     Model = new EditorModel
                     {
-                        Selected = theAssembly,
-                        Json = Core.Instance.Load(theAssembly),
-                        Extensions = Core.Instance.ExtensionItems
+                        RebootUserPrompt = Core.Instance.RebootUserPrompt,
+                        SelectedExtension = extension,
+                        Json = Core.Instance.GetJson(RecipeCollection, extension),
+                        Extensions = Extensions,
+                        SnapShots = Core.Instance.GetSnapShots(),
+                        SelectedFile = string.IsNullOrEmpty(file) ? Core.c_MainFile : file
                     },
                     Template = Templates.Editor
                 };
@@ -50,7 +69,7 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
 
         public Response Post(EditorModel theModel)
         {
-            Core.Instance.Replace(theModel.Json);
+            Core.Instance.Replace(theModel.SelectedFile, theModel.Json);
 
             return new Response
             {

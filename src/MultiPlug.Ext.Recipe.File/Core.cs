@@ -11,21 +11,17 @@ namespace MultiPlug.Ext.Recipe.File
     {
         private static Core m_Instance = null;
 
-        internal void SetSave(string theExtension, bool shouldSave)
-        {
-            ExtensionItem Search = ExtensionItems.FirstOrDefault(Extension => Extension.Name == theExtension);
-            if(Search != null)
-            {
-                Search.Save = shouldSave;
-            }
-        }
-
         public event EventHandler<Extension.Core.Exchange.Recipe> Loaded;
 
         internal ExtensionItem[] ExtensionItems { get; private set; } = new ExtensionItem[0];
         internal string FilePath { get; private set; }
         internal string LastRead { get; private set; }
         internal string LastWrite{ get; private set; }
+        private string m_SnapShotsPath;
+
+        internal const string c_MainFile = "Main";
+
+        internal bool RebootUserPrompt { get; set; }
 
         public static Core Instance
         {
@@ -39,27 +35,59 @@ namespace MultiPlug.Ext.Recipe.File
             }
         }
 
-
-
         private Core()
         {
             FilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "base.json");
             LastRead = "Never";
+            m_SnapShotsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "snapshots");
         }
 
-        internal string ReadFile()
+        internal void SetSave(string theExtension, bool shouldSave)
         {
-            return System.IO.File.ReadAllText(FilePath);
+            ExtensionItem Search = ExtensionItems.FirstOrDefault(Extension => Extension.Name == theExtension);
+            if (Search != null)
+            {
+                Search.Save = shouldSave;
+            }
         }
 
-
-        private Extension.Core.Exchange.Recipe LoadFile()
+        internal void SetOverwrite(string theExtension, bool shouldOverwrite)
         {
-            Extension.Core.Exchange.Recipe Result = new Extension.Core.Exchange.Recipe { Json = ReadFile() };
-            return Result;
+            ExtensionItem Search = ExtensionItems.FirstOrDefault(Extension => Extension.Name == theExtension);
+            if (Search != null)
+            {
+                Search.Overwrite = shouldOverwrite;
+            }
         }
 
-        internal void Replace(string theJson)
+        internal void SetOverwriteAll(bool shouldOverwrite)
+        {
+            foreach ( var Extension in ExtensionItems)
+            {
+                Extension.Overwrite = shouldOverwrite;
+            }
+        }
+
+        internal string ReadFile(string theFileName)
+        {
+            try
+            {
+                if(theFileName == c_MainFile)
+                {
+                    return System.IO.File.ReadAllText(FilePath);
+                }
+                else
+                {
+                    return System.IO.File.ReadAllText(Path.Combine(m_SnapShotsPath, theFileName + ".json"));
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        internal void Replace(string theFileName, string theJson)
         {
             try
             {
@@ -77,36 +105,44 @@ namespace MultiPlug.Ext.Recipe.File
                 }
                         
                 var Recipe = new Extension.Core.Exchange.Recipe(Collection);
-                Save(Recipe);
-
-                ExtensionItems = Merge(ExtensionItems, Collection.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true }).ToArray());
+                Save(theFileName, Recipe);
+                if(theFileName == c_MainFile)
+                {
+                    ExtensionItems = NewInTo(ExtensionItems, Collection.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true }).ToArray());
+                }
             }
             catch(Newtonsoft.Json.JsonReaderException)
             {
             }
         }
 
-        internal string Load( string theAssembly )
+        internal string Load(string theFileName, string theAssembly )
         {
-            Extension.Core.Exchange.Recipe config = LoadFile();
-            RecipeCollection Object = Extension.Core.Exchange.Recipe.ToObject(config.Json);
+            string config = ReadFile(theFileName);
+            RecipeCollection Object = Extension.Core.Exchange.Recipe.ToObject(config);
 
-            var Search = Object.Extensions.FirstOrDefault(e => e.Assembly.Equals(theAssembly, StringComparison.OrdinalIgnoreCase));
+            return GetJson(Object, theAssembly);
+        }
 
+        internal string GetJson(RecipeCollection theRecipeCollection, string theAssembly)
+        {
             string Result = string.Empty;
 
-            if(Search != null)
+            if (theRecipeCollection != null)
             {
-                Result = Search.ToJson(true);
+                var Search = theRecipeCollection.Extensions.FirstOrDefault(e => e.Assembly.Equals(theAssembly, StringComparison.OrdinalIgnoreCase));
+                if (Search != null)
+                {
+                    Result = Search.ToJson(true);
+                }
             }
-
             return Result;
         }
 
         internal void LoadSingle(string theAssembly)
         {
-            Extension.Core.Exchange.Recipe config = LoadFile();
-            RecipeCollection Object = Extension.Core.Exchange.Recipe.ToObject(config.Json);
+            string config = ReadFile(c_MainFile);
+            RecipeCollection Object = Extension.Core.Exchange.Recipe.ToObject(config);
 
             var Search = Object.Extensions.FirstOrDefault(e => e.Assembly.Equals(theAssembly, StringComparison.OrdinalIgnoreCase));
 
@@ -116,7 +152,12 @@ namespace MultiPlug.Ext.Recipe.File
             }
         }
 
-        internal void Load()
+        internal void PushRecipe()
+        {
+            Loaded?.Invoke(this, LoadItems());
+        }
+
+        private Extension.Core.Exchange.Recipe LoadItems()
         {
             Extension.Core.Exchange.Recipe Recipe = null;
             DateTime DateTimeNow = DateTime.Now;
@@ -125,7 +166,7 @@ namespace MultiPlug.Ext.Recipe.File
 
             try
             {
-                Recipe = LoadFile();
+                Recipe = new Extension.Core.Exchange.Recipe { Json = ReadFile(c_MainFile) };
                 Object = Extension.Core.Exchange.Recipe.ToObject(Recipe.Json);
                 LastRead = DateTimeNow.ToString("d/M/yyyy") + " at " + DateTimeNow.ToString("h:mm:ss");
             }
@@ -136,15 +177,15 @@ namespace MultiPlug.Ext.Recipe.File
             }
 
 
-            if( Object != null)
+            if (Object != null)
             {
-                ExtensionItems = Merge(ExtensionItems, Object.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true }).ToArray());
+                ExtensionItems = NewInTo(ExtensionItems, Object.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true, Overwrite = true }).ToArray());
             }
 
-            Loaded?.Invoke(this, Recipe);
+            return Recipe;
         }
 
-        private ExtensionItem[] Merge(ExtensionItem[] theExisting, ExtensionItem[] theNew)
+        private ExtensionItem[] NewInTo(ExtensionItem[] theExisting, ExtensionItem[] theNew)
         {
             List<ExtensionItem> New = new List<ExtensionItem>(theNew);
 
@@ -161,7 +202,7 @@ namespace MultiPlug.Ext.Recipe.File
             return New.ToArray();
         }
 
-        private RecipeCollection Merge(RecipeCollection theExisting, RecipeCollection theNew)
+        private RecipeCollection MergeNewInTo(RecipeCollection theExisting, RecipeCollection theNew)
         {
             if (theNew.Extensions.Any())
             {
@@ -184,35 +225,57 @@ namespace MultiPlug.Ext.Recipe.File
         }
 
 
-        internal void Save(Extension.Core.Exchange.Recipe theRecipe)
+        internal void Save(string theFileName, Extension.Core.Exchange.Recipe theRecipe)
         {
             RecipeCollection ExistingRecipeCollection = null;
 
             try
             {
-                Extension.Core.Exchange.Recipe ConfigFile = LoadFile();
-                ExistingRecipeCollection = Extension.Core.Exchange.Recipe.ToObject(ConfigFile.Json);
+                string ConfigFile = ReadFile(theFileName);
+                ExistingRecipeCollection = Extension.Core.Exchange.Recipe.ToObject(ConfigFile);
             }
             catch
             {
             }
 
-
             RecipeCollection NewRecipeCollection = Extension.Core.Exchange.Recipe.ToObject(theRecipe.Json);
 
-            if(ExistingRecipeCollection != null)
+            if (theFileName == c_MainFile)
             {
-                NewRecipeCollection = Merge(ExistingRecipeCollection, NewRecipeCollection);
+                NewRecipeCollection = RemoveNoOverwriteItems(NewRecipeCollection, ExtensionItems);
             }
 
+            if (ExistingRecipeCollection != null)
+            {
+                NewRecipeCollection = MergeNewInTo(ExistingRecipeCollection, NewRecipeCollection);
+            }
 
-            NewRecipeCollection = RemoveNotToBeSaved(NewRecipeCollection, ExtensionItems);
+            if(theFileName == c_MainFile)
+            {
+                NewRecipeCollection = RemoveNotToBeSaved(NewRecipeCollection, ExtensionItems);
+            }
+
+            if (theFileName == c_MainFile)
+            {
+                ExtensionItems = NewInTo(ExtensionItems, NewRecipeCollection.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true, Overwrite = true }).ToArray());
+            }
 
             var Recipe = new Extension.Core.Exchange.Recipe();
 
             Recipe.ToJson(NewRecipeCollection);
 
-            using (Stream FileStream = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            string SavePath;
+
+            if (theFileName == c_MainFile)
+            {
+                SavePath = FilePath;
+            }
+            else
+            {
+                SavePath = Path.Combine(m_SnapShotsPath, theFileName + ".json");
+            }
+
+            using (Stream FileStream = new FileStream(SavePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 using (StreamWriter StreamWriter = new StreamWriter(FileStream))
                 {
@@ -220,14 +283,101 @@ namespace MultiPlug.Ext.Recipe.File
                 }
             }
 
-            DateTime DateTimeNow = DateTime.Now;
-            LastWrite = DateTimeNow.ToString("d/M/yyyy") + " at " + DateTimeNow.ToString("h:mm:ss");
+            if(theFileName == c_MainFile)
+            {
+                DateTime DateTimeNow = DateTime.Now;
+                LastWrite = DateTimeNow.ToString("d/M/yyyy") + " at " + DateTimeNow.ToString("h:mm:ss");
+            }
         }
 
-        private RecipeCollection RemoveNotToBeSaved(RecipeCollection newRecipeCollection, ExtensionItem[] extensionItems)
+        private static RecipeCollection RemoveNoOverwriteItems(RecipeCollection theNewRecipeCollection, ExtensionItem[] theExtensionItems )
         {
-            var UnsaveExtensions = extensionItems.Where(item => item.Save == false);
-            return new RecipeCollection( newRecipeCollection.Extensions.Where(item => UnsaveExtensions.FirstOrDefault( Extension => Extension.Name == item.Assembly) == null ).ToArray());
+            var NoOverwriteExtensions = theExtensionItems.Where(item => item.Overwrite == false);
+            return new RecipeCollection(theNewRecipeCollection.Extensions.Where(item => NoOverwriteExtensions.FirstOrDefault(Extension => Extension.Name == item.Assembly) == null).ToArray());
+        }
+
+        private static RecipeCollection RemoveNotToBeSaved(RecipeCollection theNewRecipeCollection, ExtensionItem[] theExtensionItems)
+        {
+            var UnsaveExtensions = theExtensionItems.Where(item => item.Save == false);
+            return new RecipeCollection( theNewRecipeCollection.Extensions.Where(item => UnsaveExtensions.FirstOrDefault( Extension => Extension.Name == item.Assembly) == null ).ToArray());
+        }
+
+        internal string[] GetSnapShots()
+        {
+            if(Directory.Exists(m_SnapShotsPath))
+            {
+                return Directory.GetFiles(m_SnapShotsPath, "*.json").Select( file => Path.GetFileNameWithoutExtension(file)).ToArray();
+            }
+            else
+            {
+                return new string[0];
+            }
+        }
+
+        internal void CreateSnapShot( string theFileName )
+        {
+            if (!Directory.Exists(m_SnapShotsPath))
+            {
+                Directory.CreateDirectory(m_SnapShotsPath);
+            }
+
+            theFileName = string.Join("-", theFileName.Split(Path.GetInvalidFileNameChars()));
+            theFileName = theFileName.Replace(" ", "-");
+
+            var NewSnapShotsPath = Path.Combine(m_SnapShotsPath, theFileName + ".json");
+
+            if(System.IO.File.Exists(NewSnapShotsPath) == false)
+            {
+                System.IO.File.Copy(FilePath, Path.Combine(m_SnapShotsPath, theFileName + ".json"));
+            }
+        }
+
+        internal bool DeleteSnapShot(string theFileName )
+        {
+            try
+            {
+                System.IO.File.Delete(Path.Combine(m_SnapShotsPath, theFileName + ".json"));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
+        internal bool CopyToMainRecipe(string theFileName)
+        {
+            bool Result = false;
+
+            if (!string.IsNullOrEmpty(theFileName))
+            {
+                var SnapShotPath = Path.Combine(m_SnapShotsPath, theFileName + ".json");
+
+                if (System.IO.File.Exists(SnapShotPath))
+                {
+                    try
+                    {
+                        System.IO.File.Copy(SnapShotPath, FilePath, true);
+                        DateTime DateTimeNow = DateTime.Now;
+                        LastWrite = DateTimeNow.ToString("d/M/yyyy") + " at " + DateTimeNow.ToString("h:mm:ss");
+
+                        LoadItems();
+
+                        foreach (var item in ExtensionItems)
+                        {
+                            item.Overwrite = false;
+                        }
+                        RebootUserPrompt = true;
+                        Result = true;
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+            return Result;
         }
     }
 }

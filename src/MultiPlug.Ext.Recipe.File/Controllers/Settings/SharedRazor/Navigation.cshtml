@@ -15,6 +15,11 @@
         return Model.Context.Paths.Current == Model.Context.Paths.Home + "sideload/" ? "active" : string.Empty;
     }
 
+    public string NavLocationIsSnapShots()
+    {
+        return Model.Context.Paths.Current == Model.Context.Paths.Home + "snapshots/" ? "active" : string.Empty;
+    }
+
     public string NavLocationIsAbout()
     {
         return Model.Context.Paths.Current == Model.Context.Paths.Home + "about/" ? "active" : string.Empty;
@@ -26,6 +31,14 @@
         <li class="@NavLocationIsHome()"><a href="@Raw(Model.Context.Paths.Home)">Home</a></li>
         <li class="@NavLocationIsEditor()"><a href="@Raw(Model.Context.Paths.Home)editor/">Editor</a></li>
         <li class="@NavLocationIsSideload()"><a href="@Raw(Model.Context.Paths.Home)sideload/">Sideload</a></li>
+        <li class="@NavLocationIsSnapShots()"><a href="@Raw(Model.Context.Paths.Home)snapshots/">Snapshots</a></li>
         <li class="@NavLocationIsAbout()"><a href="@Raw(Model.Context.Paths.Home)about/">About</a></li>
     </ul>
 </div>
+
+@if (Model.Extension.Model.RebootUserPrompt)
+{
+    <div class="alert">
+        <strong>Reboot or Push Required</strong> Changes have been made that require a System Reboot or Recipe Push to be applied.
+    </div>
+}

@@ -11,5 +11,6 @@ namespace MultiPlug.Ext.Recipe.File.Models
         public string Trademark { get; set; }
         public string Version { get; set; }
         public string RecipeFileLocation { get; set; }
+        public bool RebootUserPrompt { get; internal set; }
     }
 }

@@ -61,19 +61,24 @@ namespace MultiPlug.Ext.Recipe.File.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using System;
-        ///using System.Collections.Generic;
-        ///using System.Linq;
-        ///using System.Text;
-        ///using System.Threading.Tasks;
+        ///   Looks up a localized string similar to &lt;section class=&quot;row-fluid&quot;&gt;
         ///
-        ///namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.About
-        ///{
-        ///    class About
-        ///    {
-        ///    }
-        ///}
-        ///.
+        ///    &lt;div class=&quot;row-fluid&quot;&gt;
+        ///        &lt;div class=&quot;box&quot;&gt;
+        ///
+        ///            &lt;div class=&quot;span12&quot;&gt;
+        ///                &lt;p style=&quot;font-size:22.75px; padding-top:10px; text-align: center;&quot;&gt;Simple File Configurator&lt;/p&gt;
+        ///            &lt;/div&gt;
+        ///
+        ///        &lt;/div&gt;
+        ///    &lt;/div&gt;
+        ///
+        ///    @Include(&quot;MultiPlug.Ext.Recipe.File.RecipeFile_Navigation&quot;)
+        ///
+        ///    &lt;div class=&quot;row-fluid&quot;&gt;
+        ///        &lt;div class=&quot;span12&quot;&gt;
+        ///            &lt;h3 class=&quot;box-header&quot;&gt;About MultiPlug.Ext.Recipe.File&lt;/h3&gt;
+        ///            &lt;div class=&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string About {
             get {
@@ -83,6 +88,12 @@ namespace MultiPlug.Ext.Recipe.File.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to @model MultiPlug.Base.Http.EdgeApp
+        ///@functions {
+        ///    public string IsSelected(string theExtensionName1, string theExtensionName2)
+        ///    {
+        ///        return theExtensionName1 == theExtensionName2 ? &quot;selected&quot; : string.Empty;
+        ///    }
+        ///}
         ///
         ///&lt;form action=&quot;&quot; method=&quot;post&quot; accept-charset=&quot;utf-8&quot; enctype=&quot;application/x-www-form-urlencoded&quot;&gt;
         ///    &lt;section class=&quot;row-fluid&quot;&gt;
@@ -91,14 +102,65 @@ namespace MultiPlug.Ext.Recipe.File.Properties {
         ///            &lt;div class=&quot;box&quot;&gt;
         ///                &lt;div class=&quot;span3&quot;&gt;
         ///                &lt;/div&gt;
-        ///                &lt;div class=&quot;span6&quot;&gt;
-        ///                    &lt;p style=&quot;font-size:26px; line-height: 54px; text-align: center; margin: 0px;&quot;&gt;Recipe Editor&lt;/p&gt;
-        ///                &lt;/div&gt;
-        ///                &lt;div class=&quot;span3&quot; s [rest of string was truncated]&quot;;.
+        ///                &lt;d [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Editor {
             get {
                 return ResourceManager.GetString("Editor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @model MultiPlug.Base.Http.EdgeApp
+        ///@functions {
+        ///    public string IsChecked(bool isSave)
+        ///    {
+        ///        return isSave ? &quot;checked&quot; : string.Empty;
+        ///    }
+        ///}
+        ///
+        ///&lt;section class=&quot;row-fluid&quot;&gt;
+        ///
+        ///    &lt;div class=&quot;row-fluid&quot;&gt;
+        ///        &lt;div class=&quot;box&quot;&gt;
+        ///
+        ///            &lt;div class=&quot;span12&quot;&gt;
+        ///                &lt;p style=&quot;font-size:22.75px; padding-top:10px; text-align: center;&quot;&gt;Recipe via File&lt;/p&gt;
+        ///            &lt;/div&gt;
+        ///
+        ///        &lt;/div&gt;
+        ///    &lt;/div&gt;
+        ///
+        ///    @Include(&quot;MultiPlug.Ext.Recipe.File.RecipeFile_Navigation&quot;)
+        ///
+        ///    [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Home {
+            get {
+                return ResourceManager.GetString("Home", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @model MultiPlug.Base.Http.EdgeApp
+        ///@functions {
+        ///    public string NavLocationIsHome()
+        ///    {
+        ///        return Model.Context.Paths.Current == Model.Context.Paths.Home ? &quot;active&quot; : string.Empty;
+        ///    }
+        ///
+        ///    public string NavLocationIsEditor()
+        ///    {
+        ///        return Model.Context.Paths.Current.StartsWith( Model.Context.Paths.Home + &quot;editor/&quot;) ? &quot;active&quot; : string.Empty;
+        ///    }
+        ///
+        ///    public string NavLocationIsSideload()
+        ///    {
+        ///        return Model.Context.Paths.Current == Model.Context.Paths.Home + &quot;sidelo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Navigation {
+            get {
+                return ResourceManager.GetString("Navigation", resourceCulture);
             }
         }
         
@@ -120,59 +182,39 @@ namespace MultiPlug.Ext.Recipe.File.Properties {
         ///    @Include(&quot;MultiPlug.Ext.Recipe.File.RecipeFile_Navigation&quot;)
         ///
         ///    &lt;div class=&quot;row-fluid&quot;&gt;
-        ///
-        ///            &lt;div class=&quot;box&quot;&gt;
-        ///
-        ///                &lt;div class=&quot;row-fluid&quot;&gt;
-        ///              [rest of string was truncated]&quot;;.
+        ///        &lt;div class=&quot;box&quot;&gt;
+        ///            &lt;h4&gt;Sideload&lt;/h4&gt;
+        ///            &lt;div class=&quot;row-flu [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string Home {
+        internal static string Sideload {
             get {
-                return ResourceManager.GetString("Home", resourceCulture);
+                return ResourceManager.GetString("Sideload", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to @model MultiPlug.Base.Http.EdgeApp
-        ///@functions {
-        ///    public string NavLocationIsHome()
-        ///    {
-        ///        return Model.Context.Paths.Current == Model.Context.Paths.Home ? &quot;active&quot; : string.Empty;
-        ///    }
         ///
-        ///    public string NavLocationIsEditor()
-        ///    {
-        ///        return Model.Context.Paths.Current == Model.Context.Paths.Home + &quot;editor/&quot; ? &quot;active&quot; : string.Empty;
-        ///    }
+        ///&lt;section class=&quot;row-fluid&quot;&gt;
         ///
-        ///    public string NavLocationIsSideload()
-        ///    {
-        ///        return Model.Context.Paths.Current == Model.Context.Paths.Home + &quot;sideload/&quot; ? &quot;ac [rest of string was truncated]&quot;;.
+        ///    &lt;div class=&quot;row-fluid&quot;&gt;
+        ///        &lt;div class=&quot;box&quot;&gt;
+        ///            &lt;div class=&quot;span12&quot;&gt;
+        ///                &lt;p style=&quot;font-size:22.75px; padding-top:10px; text-align: center;&quot;&gt;Simple File Configurator&lt;/p&gt;
+        ///            &lt;/div&gt;
+        ///        &lt;/div&gt;
+        ///    &lt;/div&gt;
+        ///
+        ///    @Include(&quot;MultiPlug.Ext.Recipe.File.RecipeFile_Navigation&quot;)
+        ///
+        ///    &lt;div class=&quot;row-fluid&quot;&gt;
+        ///        &lt;div class=&quot;box&quot;&gt;
+        ///            &lt;h4&gt;Sideload&lt;/h4&gt;
+        ///            &lt;div class=&quot;row-fluid w [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string Navigation {
+        internal static string SnapShots {
             get {
-                return ResourceManager.GetString("Navigation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using System;
-        ///using System.Collections.Generic;
-        ///using System.Linq;
-        ///using System.Text;
-        ///using System.Threading.Tasks;
-        ///
-        ///namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Sideload
-        ///{
-        ///    class Sideload
-        ///    {
-        ///    }
-        ///}
-        ///.
-        /// </summary>
-        internal static string Sideload {
-            get {
-                return ResourceManager.GetString("Sideload", resourceCulture);
+                return ResourceManager.GetString("SnapShots", resourceCulture);
             }
         }
     }

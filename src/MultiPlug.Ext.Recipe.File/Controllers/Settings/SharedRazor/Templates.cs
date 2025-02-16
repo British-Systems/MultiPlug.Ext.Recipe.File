@@ -7,6 +7,7 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.SharedRazor
         internal const string Editor = "RecipeFile_Editor";
         internal const string Navigation = "RecipeFile_Navigation";
         internal const string Sideload = "RecipeFile_Sideload";
+        internal const string SnapShots = "RecipeFile_SnapShots";
         internal const string About = "RecipeFile_About";
     }
 }

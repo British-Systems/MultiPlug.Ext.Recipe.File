@@ -30,6 +30,7 @@ namespace MultiPlug.Ext.Recipe.File
                     new RazorTemplate(Templates.Home, Resources.Home),
                     new RazorTemplate(Templates.Editor, Resources.Editor),
                     new RazorTemplate(Templates.Sideload, Resources.Sideload),
+                    new RazorTemplate(Templates.SnapShots, Resources.SnapShots),
                     new RazorTemplate(Templates.About, Resources.About),
                 };
             }
@@ -37,12 +38,12 @@ namespace MultiPlug.Ext.Recipe.File
 
         public override void RecipeLoad()
         {
-            Core.Instance.Load();
+            Core.Instance.PushRecipe();
         }
 
         public override void RecipeSave(Extension.Core.Exchange.Recipe theRecipe)
         {
-            Core.Instance.Save(theRecipe);
+            Core.Instance.Save(Core.c_MainFile, theRecipe);
         }
 
         public override object Save()

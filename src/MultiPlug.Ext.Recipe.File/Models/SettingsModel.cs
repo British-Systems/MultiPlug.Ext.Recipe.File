@@ -10,5 +10,6 @@ namespace MultiPlug.Ext.Recipe.File.Models
         public string FilePath { get; set; }
         public string LastRead { get; internal set; }
         public string LastWrite { get; internal set; }
+        public bool RebootUserPrompt { get; internal set; }
     }
 }
