@@ -43,7 +43,7 @@ namespace MultiPlug.Ext.Recipe.File
 
         public override void RecipeSave(Extension.Core.Exchange.Recipe theRecipe)
         {
-            Core.Instance.Save(Core.c_MainFile, theRecipe);
+            Core.Instance.Save(Core.c_MainFile, theRecipe, false);
         }
 
         public override object Save()

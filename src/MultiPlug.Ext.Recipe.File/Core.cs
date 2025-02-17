@@ -87,13 +87,13 @@ namespace MultiPlug.Ext.Recipe.File
             }
         }
 
-        internal void Replace(string theFileName, string theJson)
+        internal RecipeCollection Replace(string theFileName, string theJson)
         {
+            RecipeCollection Collection = null;
+
             try
             {
                 RecipeItem item = new RecipeItem(theJson);
-
-                RecipeCollection Collection;
 
                 if( item.Assembly == null)
                 {
@@ -105,15 +105,13 @@ namespace MultiPlug.Ext.Recipe.File
                 }
                         
                 var Recipe = new Extension.Core.Exchange.Recipe(Collection);
-                Save(theFileName, Recipe);
-                if(theFileName == c_MainFile)
-                {
-                    ExtensionItems = NewInTo(ExtensionItems, Collection.Extensions.Select(e => new ExtensionItem { Name = e.Assembly, Save = true }).ToArray());
-                }
+                Save(theFileName, Recipe, true);
             }
             catch(Newtonsoft.Json.JsonReaderException)
             {
             }
+
+            return Collection;
         }
 
         internal string Load(string theFileName, string theAssembly )
@@ -187,19 +185,19 @@ namespace MultiPlug.Ext.Recipe.File
 
         private ExtensionItem[] NewInTo(ExtensionItem[] theExisting, ExtensionItem[] theNew)
         {
-            List<ExtensionItem> New = new List<ExtensionItem>(theNew);
+            List<ExtensionItem> Existing = new List<ExtensionItem>(theExisting);
 
-            foreach (ExtensionItem Item in theExisting)
+            foreach (ExtensionItem Item in theNew)
             {
-                ExtensionItem Search = New.FirstOrDefault(i => i.Name == Item.Name);
+                ExtensionItem Search = Existing.FirstOrDefault(i => i.Name == Item.Name);
 
                 if (Search == null)
                 {
-                    New.Add(Item);
+                    Existing.Add(Item);
                 }
             }
 
-            return New.ToArray();
+            return Existing.ToArray();
         }
 
         private RecipeCollection MergeNewInTo(RecipeCollection theExisting, RecipeCollection theNew)
@@ -225,7 +223,7 @@ namespace MultiPlug.Ext.Recipe.File
         }
 
 
-        internal void Save(string theFileName, Extension.Core.Exchange.Recipe theRecipe)
+        internal void Save(string theFileName, Extension.Core.Exchange.Recipe theRecipe, bool shouldOverwriteAndSave)
         {
             RecipeCollection ExistingRecipeCollection = null;
 
@@ -240,7 +238,7 @@ namespace MultiPlug.Ext.Recipe.File
 
             RecipeCollection NewRecipeCollection = Extension.Core.Exchange.Recipe.ToObject(theRecipe.Json);
 
-            if (theFileName == c_MainFile)
+            if (shouldOverwriteAndSave == false && theFileName == c_MainFile)
             {
                 NewRecipeCollection = RemoveNoOverwriteItems(NewRecipeCollection, ExtensionItems);
             }
@@ -250,7 +248,7 @@ namespace MultiPlug.Ext.Recipe.File
                 NewRecipeCollection = MergeNewInTo(ExistingRecipeCollection, NewRecipeCollection);
             }
 
-            if(theFileName == c_MainFile)
+            if(shouldOverwriteAndSave == false && theFileName == c_MainFile)
             {
                 NewRecipeCollection = RemoveNotToBeSaved(NewRecipeCollection, ExtensionItems);
             }
@@ -316,6 +314,11 @@ namespace MultiPlug.Ext.Recipe.File
 
         internal void CreateSnapShot( string theFileName )
         {
+            if(string.IsNullOrEmpty(theFileName))
+            {
+                return;
+            }
+
             if (!Directory.Exists(m_SnapShotsPath))
             {
                 Directory.CreateDirectory(m_SnapShotsPath);

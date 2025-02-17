@@ -55,7 +55,6 @@
     <Compile Include="Controllers\API\APIEndpoint.cs" />
     <Compile Include="Controllers\API\Download\DownloadController.cs" />
     <Compile Include="Controllers\API\Push\PushController.cs" />
-    <Compile Include="Controllers\API\Restart\SetRestartController.cs" />
     <Compile Include="Controllers\API\SetOverwrite\SetOverwriteController.cs" />
     <Compile Include="Controllers\API\SetSave\SetSaveController.cs" />
     <Compile Include="Controllers\Settings\About\AboutController.cs" />

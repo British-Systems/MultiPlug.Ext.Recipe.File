@@ -1,9 +1,9 @@
-﻿using MultiPlug.Base.Attribute;
+﻿using System.Linq;
+using MultiPlug.Base.Attribute;
 using MultiPlug.Base.Http;
 using MultiPlug.Ext.Recipe.File.Models;
 using MultiPlug.Ext.Recipe.File.Controllers.Settings.SharedRazor;
 using MultiPlug.Extension.Core.Exchange;
-using System.Linq;
 
 namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
 {
@@ -69,7 +69,20 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Editor
 
         public Response Post(EditorModel theModel)
         {
-            Core.Instance.Replace(theModel.SelectedFile, theModel.Json);
+            var Recipe = Core.Instance.Replace(theModel.SelectedFile, theModel.Json);
+
+            if(theModel.SelectedFile == Core.c_MainFile)
+            {
+                if(Recipe != null && Recipe.Extensions != null && Recipe.Extensions.Any())
+                {
+                    foreach(var Extension in Recipe.Extensions)
+                    {
+                        Core.Instance.SetOverwrite(Extension.Assembly, false);
+                    }
+
+                    Core.Instance.RebootUserPrompt = true;
+                }
+            }
 
             return new Response
             {

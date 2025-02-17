@@ -1,4 +1,5 @@
-﻿using MultiPlug.Base.Attribute;
+﻿using System.Linq;
+using MultiPlug.Base.Attribute;
 using MultiPlug.Base.Http;
 using MultiPlug.Ext.Recipe.File.Controllers.Settings.SharedRazor;
 using MultiPlug.Ext.Recipe.File.Models;
@@ -32,12 +33,19 @@ namespace MultiPlug.Ext.Recipe.File.Controllers.Settings.Sideload
             {
                 var json = System.IO.File.ReadAllText(theFiles.Files[0].Path);
 
-                Core.Instance.Replace(string.IsNullOrEmpty(into) ? Core.c_MainFile : into, json);
+                var Recipe = Core.Instance.Replace(string.IsNullOrEmpty(into) ? Core.c_MainFile : into, json);
 
-                if((!string.IsNullOrEmpty(into)) && into == Core.c_MainFile)
+                if ((!string.IsNullOrEmpty(into)) && into == Core.c_MainFile)
                 {
-                    Core.Instance.SetOverwriteAll(false);
-                    Core.Instance.RebootUserPrompt = true;
+                    if (Recipe != null && Recipe.Extensions != null && Recipe.Extensions.Any())
+                    {
+                        foreach (var Extension in Recipe.Extensions)
+                        {
+                            Core.Instance.SetOverwrite(Extension.Assembly, false);
+                        }
+
+                        Core.Instance.RebootUserPrompt = true;
+                    }
                 }
             }
 

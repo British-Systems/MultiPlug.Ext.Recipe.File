@@ -65,50 +65,7 @@
             $.post('@Raw(Model.Context.Paths.Current)copytomain', { json: $('#textarea-json').val() }, function (data) {
             })
             .done(function () {
-                if (confirm('Would you like to Push the update to MultiPlug now? CANCEL now to Push the update on next MultiPlug Restart.')) {
-                    $.ajax({
-                        type: "POST",
-                        url: '@Raw(Model.Context.Paths.APIs)push/@Raw(Model.Extension.Model.SelectedExtension)',
-                        success: function () {
-                        },
-                    });
-                    $.ajax({
-                        type: "POST",
-                        url: '@Raw(Model.Context.Paths.APIs)setsave/',
-                        data: { extension: '@Raw(Model.Extension.Model.SelectedExtension)', save: true },
-                        success: function (data) {
-                        },
-                        error: function () {
-                        },
-                        complete: function () {
-                        }
-                    });
-                }
-                else
-                {
-                    $.ajax({
-                        type: "POST",
-                        url: '@Raw(Model.Context.Paths.APIs)setoverwrite/',
-                        data: { extension: '@Raw(Model.Extension.Model.SelectedExtension)', save: false },
-                        success: function (data) {
-                        },
-                        error: function () {
-                        },
-                        complete: function () {
-                        }
-                    });
-                    $.ajax({
-                        type: "POST",
-                        url: '@Raw(Model.Context.Paths.APIs)setrestart/',
-                        success: function (data) {
-                            location.reload();
-                        },
-                        error: function () {
-                        },
-                        complete: function () {
-                        }
-                    });
-                }
+                location.reload();
             });
         }
     });
